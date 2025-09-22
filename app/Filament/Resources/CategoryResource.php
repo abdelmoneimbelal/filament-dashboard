@@ -58,18 +58,24 @@ class CategoryResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name'),
-                TextColumn::make('slug'),
+                TextColumn::make('name')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('slug')
+                    ->sortable()
+                    ->searchable(),
                 ColorColumn::make('color'),
-                TextColumn::make('description'),
+                TextColumn::make('description')
+                    ->sortable(),
                 IconColumn::make('is_active')
-                    ->boolean(),
+                    ->boolean()
+                    ->sortable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                ViewAction::make(),
+                ViewAction::make()->slideOver(),
                 EditAction::make(),
                 DeleteAction::make(),
             ])
