@@ -267,6 +267,9 @@ npm run build
 
 <p align="center">
   صُنع بـ ❤️ باستخدام Laravel & Filament
+</p>
+
+<p align="center">
   Abdelmoneim Belal
 </p>
 
