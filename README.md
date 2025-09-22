@@ -73,7 +73,7 @@
 
 ### 1. استنساخ المشروع
 ```bash
-git clone https://github.com/your-username/filament-blog.git
+git clone https://github.com/abdelmoneimbelal/filament-dashboard.git
 cd filament-blog
 ```
 
@@ -252,10 +252,10 @@ npm run build
 
 ## 📞 الدعم والمساعدة
 
-- 📧 **البريد الإلكتروني**: support@yourdomain.com
+- 📧 **البريد الإلكتروني**: abdobelal069@gmail.com
 - 📱 **Discord**: [انضم لمجتمعنا](https://discord.gg/filament)
 - 📖 **التوثيق**: [Filament Docs](https://filamentphp.com/docs)
-- 🐛 **تقرير الأخطاء**: [GitHub Issues](https://github.com/your-username/filament-blog/issues)
+- 🐛 **تقرير الأخطاء**: [GitHub Issues](https://github.com/abdelmoneimbelal/filament-dashboard/issues)
 
 ## 🌟 شكر خاص
 
@@ -267,6 +267,7 @@ npm run build
 
 <p align="center">
   صُنع بـ ❤️ باستخدام Laravel & Filament
+  Abdelmoneim Belal
 </p>
 
 <p align="center">
