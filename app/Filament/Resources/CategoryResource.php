@@ -24,12 +24,13 @@ use App\Filament\Resources\CategoryResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\CategoryResource\RelationManagers;
 use App\Filament\Resources\CategoryResource\Pages\ManageCategories;
+use Filament\Tables\Columns\IconColumn;
 
 class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-list-bullet';
 
     public static function form(Form $form): Form
     {
@@ -59,8 +60,8 @@ class CategoryResource extends Resource
                 TextColumn::make('slug'),
                 ColorColumn::make('color'),
                 TextColumn::make('description'),
-                TextColumn::make('is_active')
-                    ->formatStateUsing(fn ($state) => $state ? 'Active' : 'Inactive'),
+                IconColumn::make('is_active')
+                    ->boolean(),
             ])
             ->filters([
                 //
