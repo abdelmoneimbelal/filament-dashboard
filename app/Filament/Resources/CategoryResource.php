@@ -40,11 +40,13 @@ class CategoryResource extends Resource
                     ->required()
                     ->maxLength(255),
                 TextInput::make('slug')
+                    ->unique(ignoreRecord: true)
                     ->required()
                     ->maxLength(255),
-                ColorPicker::make('color'),
+                ColorPicker::make('color')
+                    ->hexColor(),
                 Textarea::make('description')
-                    ->required()
+                    ->nullable()
                     ->maxLength(length: 255),
                 Toggle::make('is_active')
                     ->required()
