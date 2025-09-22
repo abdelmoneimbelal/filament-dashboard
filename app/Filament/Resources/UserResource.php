@@ -5,12 +5,15 @@ namespace App\Filament\Resources;
 use Filament\Forms;
 use App\Models\User;
 use Filament\Tables;
+use Illuminate\Support\Facades\Hash;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -37,7 +40,9 @@ class UserResource extends Resource
                     ->maxLength(255),
                 TextInput::make('password')
                     ->password()
-                    ->required()
+                    ->required(fn (string $context): bool => $context === 'create')
+                    ->dehydrated(fn ($state) => filled($state))
+                    ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                     ->maxLength(255),
             ]);
     }
@@ -46,19 +51,23 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('id'),
-                TextColumn::make('name'),
-                TextColumn::make('email'),
+                TextColumn::make('id')->sortable(),
+                TextColumn::make('name')->sortable(),
+                TextColumn::make('email')->sortable(),
                 TextColumn::make('created_at')
+                    ->sortable()
                     ->dateTime('d-m-Y H:i'),
                 TextColumn::make('updated_at')
+                    ->sortable()
                     ->dateTime('d-m-Y H:i'),
             ])
             ->filters([
                 //
             ])
             ->actions([
+                ViewAction::make(),
                 EditAction::make(),
+                DeleteAction::make(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
@@ -77,9 +86,7 @@ class UserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListUsers::route('/'),
-            'create' => Pages\CreateUser::route('/create'),
-            'edit' => Pages\EditUser::route('/{record}/edit'),
+            'index' => Pages\ManageUsers::route('/'),
         ];
     }
 }
