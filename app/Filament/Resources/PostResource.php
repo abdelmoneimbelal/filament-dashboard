@@ -101,6 +101,10 @@ class PostResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('id')
+                    ->label('#ID')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('title')
                     ->sortable()
                     ->searchable(),
