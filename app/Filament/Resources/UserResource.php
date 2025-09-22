@@ -36,14 +36,27 @@ class UserResource extends Resource
                     ->maxLength(255),
                 TextInput::make('email')
                     ->email()
+                    ->unique(ignoreRecord: true)
                     ->required()
                     ->maxLength(255),
                 TextInput::make('password')
                     ->password()
+                    ->confirmed()
                     ->required(fn (string $context): bool => $context === 'create')
                     ->dehydrated(fn ($state) => filled($state))
                     ->dehydrateStateUsing(fn ($state) => Hash::make($state))
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->minLength(8)
+                    ->visible(fn (string $context): bool => $context === ['create','edit']),
+                TextInput::make('password_confirmation')
+                    ->password()
+                    ->required(fn (string $context): bool => $context === 'create')
+                    ->dehydrated(fn ($state) => filled($state))
+                    ->dehydrateStateUsing(fn ($state) => Hash::make($state))
+                    ->maxLength(255)
+                    ->minLength(8)
+                    ->visible(fn (string $context): bool => $context === ['create','edit']),
+                    
             ]);
     }
 
