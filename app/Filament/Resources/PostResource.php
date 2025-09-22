@@ -82,7 +82,7 @@ class PostResource extends Resource
                         ->directory('posts'),
                         Group::make([
                             Toggle::make('published')
-                                ->required()->default(true),
+                                ->required(),
                         ])->columns(1),
                 ]),
                 
