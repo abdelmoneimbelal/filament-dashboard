@@ -9,8 +9,10 @@ use App\Models\Category;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
@@ -23,6 +25,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -43,29 +46,47 @@ class PostResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('title')
-                    ->required()
-                    ->maxLength(255),
-                TextInput::make('slug')
-                    ->required()
-                    ->maxLength(255),
-                RichEditor::make('content')
-                    ->required(),
-                FileUpload::make('image')
-                    ->image()->required()
-                    ->default('https://placehold.co/600x400')
-                    ->disk('public')
-                    ->directory('posts'),
-                Toggle::make('published')
-                    ->required()->default(true),
-                Select::make('category_id')
-                    ->relationship('category', 'name')
-                    ->label('Category')
-                    ->required(),
-                   
-                TagsInput::make('tags')
-                    ->required()
-                    ->suggestions(Category::all()->pluck('name')),
+                Section::make('Basic Information')->description('Basic information of the post')
+                ->collapsible()->columns(2)->schema([
+                    TextInput::make('title')
+                        ->required()
+                        ->maxLength(255),
+                    TextInput::make('slug')
+                        ->required()
+                        ->maxLength(255),
+                    Select::make('category_id')
+                        ->relationship('category', 'name')
+                        ->label('Category')
+                        ->required(),
+                    TagsInput::make('tags')
+                        ->required()
+                        ->suggestions(Category::all()->pluck('name')),
+                ]),
+                // Group::make([
+                //     TextInput::make('title')
+                //         ->required()
+                //         ->maxLength(255),
+                //     TextInput::make('slug')
+                //         ->required()
+                //         ->maxLength(255),
+                // ]),
+                Section::make('Content & Image')
+                ->description('Content and image of the post')
+                ->collapsible()->schema([
+                    RichEditor::make('content')
+                        ->required(),
+                    FileUpload::make('image')
+                        ->image()->required()
+                        ->default('https://placehold.co/600x400')
+                        ->disk('public')
+                        ->directory('posts'),
+                        Group::make([
+                            Toggle::make('published')
+                                ->required()->default(true),
+                        ])->columns(1),
+                ]),
+                
+                
             ]);
     }
 
@@ -96,7 +117,8 @@ class PostResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('category_id')
+                    ->relationship('category', 'name'),
             ])
             ->actions([
                 ViewAction::make(),
