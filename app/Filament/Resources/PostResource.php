@@ -49,10 +49,12 @@ class PostResource extends Resource
                 Section::make('Basic Information')->description('Basic information of the post')
                 ->collapsible()->columns(2)->schema([
                     TextInput::make('title')
+                        ->unique(ignoreRecord: true)
                         ->required()
                         ->maxLength(255),
                     TextInput::make('slug')
                         ->required()
+                        ->unique(ignoreRecord: true)
                         ->maxLength(255),
                     Select::make('category_id')
                         ->relationship('category', 'name')
@@ -77,12 +79,17 @@ class PostResource extends Resource
                         ->required(),
                     FileUpload::make('image')
                         ->image()->required()
+                        ->nullable()
+                        ->maxSize(2048) // 2MB
+                        ->acceptedFileTypes(['image/*'])
+                        // ->multiple()
+                        // ->maxFiles(1)
                         ->default('https://placehold.co/600x400')
                         ->disk('public')
                         ->directory('posts'),
                         Group::make([
                             Toggle::make('published')
-                                ->required(),
+                                ->required()->default(true),
                         ])->columns(1),
                 ]),
                 
@@ -100,7 +107,10 @@ class PostResource extends Resource
                 TextColumn::make('slug')
                     ->sortable()
                     ->searchable(),
-                ImageColumn::make('image'),
+                ImageColumn::make('image')
+                    ->default('https://placehold.co/600x400')
+                    ->width(60)
+                    ->height(60),
                 IconColumn::make('published')
                     ->boolean(),
                 ToggleColumn::make('published'),
@@ -121,7 +131,7 @@ class PostResource extends Resource
                     ->relationship('category', 'name'),
             ])
             ->actions([
-                ViewAction::make(),
+                ViewAction::make()->slideOver(),
                 EditAction::make(),
                 DeleteAction::make(),
             ])
