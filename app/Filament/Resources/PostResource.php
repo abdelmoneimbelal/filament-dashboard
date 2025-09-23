@@ -92,8 +92,6 @@ class PostResource extends Resource
                                 ->required()->default(true),
                         ])->columns(1),
                 ]),
-                
-                
             ]);
     }
 
