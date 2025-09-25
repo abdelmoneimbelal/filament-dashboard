@@ -23,6 +23,11 @@ class User extends Authenticatable
         'password',
     ];
 
+    public function posts()
+    {
+        return $this->belongsToMany(Post::class)->withPivot('order')->orderBy('order');
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *
