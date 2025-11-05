@@ -2,25 +2,27 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Schemas\Schema;
-use Filament\Actions\ViewAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\Resources\UserResource\Pages\ManageUsers;
+use App\Enum\Role;
 use Filament\Forms;
 use App\Models\User;
 use Filament\Tables;
-use Illuminate\Support\Facades\Hash;
 use Filament\Tables\Table;
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
+use Filament\Actions\DeleteAction;
+use Illuminate\Support\Facades\Hash;
+use Filament\Actions\BulkActionGroup;
+use Filament\Forms\Components\Select;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\UserResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\UserResource\RelationManagers;
+use App\Filament\Resources\UserResource\Pages\ManageUsers;
 
 class UserResource extends Resource
 {
@@ -47,17 +49,19 @@ class UserResource extends Resource
                     ->dehydrated(fn ($state) => filled($state))
                     ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                     ->maxLength(255)
-                    ->minLength(8)
-                    ->visible(fn (string $context): bool => $context === ['create','edit']),
+                    ->minLength(8),
+                    // ->visible(fn (string $context): bool => $context === ['create','edit']),
                 TextInput::make('password_confirmation')
                     ->password()
                     ->required(fn (string $context): bool => $context === 'create')
                     ->dehydrated(fn ($state) => filled($state))
                     ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                     ->maxLength(255)
-                    ->minLength(8)
-                    ->visible(fn (string $context): bool => $context === ['create','edit']),
-                    
+                    ->minLength(8),
+                    // ->visible(fn (string $context): bool => $context === ['create','edit']),
+                Select::make('role')
+                    ->options(Role::class)
+                    ->required(),
             ]);
     }
 
@@ -68,12 +72,15 @@ class UserResource extends Resource
                 TextColumn::make('id')->sortable(),
                 TextColumn::make('name')->sortable(),
                 TextColumn::make('email')->sortable(),
+                TextColumn::make('role')->sortable()
+                ->badge()
+                ->color(fn (Role $state): string => $state->getColors()),
                 TextColumn::make('created_at')
                     ->sortable()
                     ->dateTime('d-m-Y H:i'),
-                TextColumn::make('updated_at')
-                    ->sortable()
-                    ->dateTime('d-m-Y H:i'),
+                // TextColumn::make('updated_at')
+                //     ->sortable()
+                //     ->dateTime('d-m-Y H:i'),
             ])
             ->filters([
                 //
