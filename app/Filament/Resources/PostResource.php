@@ -2,27 +2,28 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Group;
-use Filament\Actions\ViewAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Forms;
 use App\Models\Post;
 use Filament\Tables;
 use App\Models\Category;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Schemas\Components\Group;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
@@ -50,13 +51,23 @@ class PostResource extends Resource
                 Section::make('Basic Information')->description('Basic information of the post')
                 ->collapsible()->columns(2)->schema([
                     TextInput::make('title')
+                        ->live(onBlur: true)
+                        ->afterStateUpdated(function (
+                            $operation,
+                            $set,
+                            $state,
+                        ) {
+                            if ($operation === 'create') {
+                                $set('slug', Str::slug($state));
+                            }
+                        })
                         ->unique(ignoreRecord: true)
                         ->required()
                         ->maxLength(255),
                     TextInput::make('slug')
-                        ->required()
                         ->unique(ignoreRecord: true)
-                        ->maxLength(255),
+                        ->maxLength(255)
+                        ->required(fn($get) => filled($get('title'))),
                     Select::make('category_id')
                         ->relationship('category', 'name')
                         ->label('Category')
